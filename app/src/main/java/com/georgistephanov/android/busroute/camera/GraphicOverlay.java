@@ -20,9 +20,9 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.google.android.gms.vision.CameraSource;
-
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -174,6 +174,10 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
             }
             return null;
         }
+    }
+
+    public Set<T> getAllGraphics() {
+        return mGraphics;
     }
 
     /**

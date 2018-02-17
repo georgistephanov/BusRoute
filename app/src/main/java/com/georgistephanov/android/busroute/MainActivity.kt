@@ -6,17 +6,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.CompoundButton
 import android.widget.TextView
-import android.widget.Toast
 import com.google.android.gms.common.api.CommonStatusCodes
-import com.google.android.gms.samples.vision.ocrreader.OcrCaptureActivity
+import org.jetbrains.anko.find
 
 class MainActivity : AppCompatActivity() {
-    private var autoFocus: CompoundButton? = null
-    private var useFlash: CompoundButton? = null
-    private var statusMessage: TextView? = null
-    private var textValue: TextView? = null
+    private val statusMessage by lazy { find<TextView>(R.id.status_message) }
+    private val textValue by lazy { find<TextView>(R.id.text_value) }
 
     private val RC_OCR_CAPTURE = 9003
     private val TAG = "MainActivity"
@@ -24,18 +20,25 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+    }
 
+    override fun onResume() {
+        super.onResume()
+
+        if (OcrCaptureActivity.isCaptured()) {
+            val set : MutableSet<String> = OcrCaptureActivity.getCameraSourceSet()
+
+            for (string in set) {
+                Log.d("Blabla", string)
+            }
+        } else {
+            Log.d("Blabla", "EMPTYYYYYYYYY========================================")
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.main_activity, menu)
-
-        statusMessage = findViewById(R.id.status_message) as TextView
-        textValue = findViewById(R.id.text_value) as TextView
-
-        autoFocus = findViewById(R.id.auto_focus) as CompoundButton
-        useFlash = findViewById(R.id.use_flash) as CompoundButton
 
         return true
     }
@@ -44,11 +47,7 @@ class MainActivity : AppCompatActivity() {
         when (item?.itemId) {
             R.id.action_camera -> {
                 val intent = Intent(this, OcrCaptureActivity::class.java)
-                intent.putExtra(OcrCaptureActivity.AutoFocus, autoFocus?.isChecked())
-                intent.putExtra(OcrCaptureActivity.UseFlash, useFlash?.isChecked())
-
                 startActivityForResult(intent, RC_OCR_CAPTURE)
-
             }
         }
 
@@ -76,5 +75,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-// PAUL IS A SLAVE

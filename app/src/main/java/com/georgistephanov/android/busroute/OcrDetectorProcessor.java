@@ -13,19 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.android.gms.samples.vision.ocrreader
+package com.georgistephanov.android.busroute;
 
-import android.util.SparseArray
-import com.georgistephanov.android.busroute.camera.GraphicOverlay
+import android.util.SparseArray;
 
-import com.google.android.gms.vision.Detector
-import com.google.android.gms.vision.text.TextBlock
+import com.georgistephanov.android.busroute.camera.GraphicOverlay;
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.text.TextBlock;
 
 /**
  * A very simple Processor which receives detected TextBlocks and adds them to the overlay
  * as OcrGraphics.
  */
-class OcrDetectorProcessor internal constructor(private val mGraphicOverlay: GraphicOverlay<OcrGraphic>) : Detector.Processor<TextBlock> {
+public class OcrDetectorProcessor implements Detector.Processor<TextBlock> {
+
+    private GraphicOverlay<OcrGraphic> mGraphicOverlay;
+
+    OcrDetectorProcessor(GraphicOverlay<OcrGraphic> ocrGraphicOverlay) {
+        mGraphicOverlay = ocrGraphicOverlay;
+    }
 
     /**
      * Called by the detector to deliver detection results.
@@ -34,20 +40,22 @@ class OcrDetectorProcessor internal constructor(private val mGraphicOverlay: Gra
      * previous frames, or reduce noise by eliminating TextBlocks that have not persisted through
      * multiple detections.
      */
-    override fun receiveDetections(detections: Detector.Detections<TextBlock>) {
-        mGraphicOverlay.clear()
-        val items = detections.detectedItems
-        for (i in 0 until items.size()) {
-            val item = items.valueAt(i)
-            val graphic = OcrGraphic(mGraphicOverlay, item)
-            mGraphicOverlay.add(graphic)
+    @Override
+    public void receiveDetections(Detector.Detections<TextBlock> detections) {
+        mGraphicOverlay.clear();
+        SparseArray<TextBlock> items = detections.getDetectedItems();
+        for (int i = 0; i < items.size(); ++i) {
+            TextBlock item = items.valueAt(i);
+            OcrGraphic graphic = new OcrGraphic(mGraphicOverlay, item);
+            mGraphicOverlay.add(graphic);
         }
     }
 
     /**
      * Frees the resources associated with this detection processor.
      */
-    override fun release() {
-        mGraphicOverlay.clear()
+    @Override
+    public void release() {
+        mGraphicOverlay.clear();
     }
 }
