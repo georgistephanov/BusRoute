@@ -2,13 +2,9 @@ package com.georgistephanov.android.busroute;
 
 import java.util.ArrayList;
 
-/**
- * Created by victor on 17/02/2018.
- */
+public class StringSimilarityCheck {
 
-public class SimilarityCheck {
-
-    private String[] letterPairs(String str) {
+    private static String[] letterPairs(String str) {
         int numPairs = str.length() - 1;
         String[] pairs = new String[numPairs];
         for (int i = 0; i < numPairs; i++) {
@@ -17,7 +13,7 @@ public class SimilarityCheck {
         return pairs;
     }
 
-    private String[] wordLetterPairs(String str) {
+    private static ArrayList<String> wordLetterPairs(String str) {
         ArrayList allPairs = new ArrayList();
         // Tokenize the string and put the tokens/words into an array
         String[] words = str.split("\\s");

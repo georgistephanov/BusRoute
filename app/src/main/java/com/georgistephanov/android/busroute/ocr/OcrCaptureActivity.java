@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.georgistephanov.android.busroute;
+package com.georgistephanov.android.busroute.ocr;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -38,12 +38,12 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.Toast;
 
+import com.georgistephanov.android.busroute.R;
 import com.georgistephanov.android.busroute.camera.CameraSource;
 import com.georgistephanov.android.busroute.camera.CameraSourcePreview;
 import com.georgistephanov.android.busroute.camera.GraphicOverlay;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
@@ -79,6 +79,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
 
     private static Set<String> cameraSourceStrings = new HashSet<>();
     private static boolean isCaptured = false;
+    private Timer timer;
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -103,7 +104,8 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        new Timer().scheduleAtFixedRate(new TimerTask() {
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 for (OcrGraphic textBlock : mGraphicOverlay.getAllGraphics()) {
@@ -243,6 +245,8 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         if (mPreview != null) {
             mPreview.stop();
         }
+
+        timer.cancel();
     }
 
     /**
