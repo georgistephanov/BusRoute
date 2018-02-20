@@ -17,7 +17,6 @@ fun isContainedInBusStops(activity: Activity, searchQuery: String) : Boolean {
         var line = reader.readLine()
 
         while (line != null) {
-
             if (line.contains(query)) {
                 return true
             }
