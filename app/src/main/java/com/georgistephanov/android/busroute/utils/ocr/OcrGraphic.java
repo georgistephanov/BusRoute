@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.georgistephanov.android.busroute.ocr;
+package com.georgistephanov.android.busroute.utils.ocr;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
-import com.georgistephanov.android.busroute.camera.GraphicOverlay;
+import com.georgistephanov.android.busroute.utils.camera.GraphicOverlay;
 import com.google.android.gms.vision.text.Text;
 import com.google.android.gms.vision.text.TextBlock;
 

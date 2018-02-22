@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.georgistephanov.android.busroute.ocr;
+package com.georgistephanov.android.busroute.utils.ocr;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -39,9 +39,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.georgistephanov.android.busroute.R;
-import com.georgistephanov.android.busroute.camera.CameraSource;
-import com.georgistephanov.android.busroute.camera.CameraSourcePreview;
-import com.georgistephanov.android.busroute.camera.GraphicOverlay;
+import com.georgistephanov.android.busroute.utils.camera.CameraSource;
+import com.georgistephanov.android.busroute.utils.camera.CameraSourcePreview;
+import com.georgistephanov.android.busroute.utils.camera.GraphicOverlay;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.text.TextBlock;

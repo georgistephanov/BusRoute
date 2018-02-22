@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'kotlin-kapt'
+
 android {
 	compileSdkVersion 26
 
@@ -36,6 +38,15 @@ dependencies {
 	compile 'com.android.support:design:26.1.0'
 	compile "org.jetbrains.anko:anko-common:0.10.3"
 	compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21"
+
+	annotationProcessor "com.google.dagger:dagger-compiler:2.8"
+	provided 'javax.annotation:jsr250-api:1.0'
+	compile 'javax.inject:javax.inject:1'
+	compile "com.google.dagger:dagger:2.11"
+	compile "com.google.dagger:dagger-android:2.11"
+	compile "com.google.dagger:dagger-android-support:2.11"
+	kapt "com.google.dagger:dagger-compiler:2.11"
+	kapt "com.google.dagger:dagger-android-processor:2.11"
 }
 
 kotlin {

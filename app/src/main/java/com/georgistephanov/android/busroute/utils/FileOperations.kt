@@ -1,4 +1,4 @@
-package com.georgistephanov.android.busroute.tfl
+package com.georgistephanov.android.busroute.utils
 
 import android.app.Activity
 import java.io.BufferedReader
