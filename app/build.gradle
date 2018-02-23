@@ -41,12 +41,19 @@ dependencies {
 
 	annotationProcessor "com.google.dagger:dagger-compiler:2.8"
 	provided 'javax.annotation:jsr250-api:1.0'
+
+	// Dagger 2 dependencies
 	compile 'javax.inject:javax.inject:1'
 	compile "com.google.dagger:dagger:2.11"
 	compile "com.google.dagger:dagger-android:2.11"
 	compile "com.google.dagger:dagger-android-support:2.11"
 	kapt "com.google.dagger:dagger-compiler:2.11"
 	kapt "com.google.dagger:dagger-android-processor:2.11"
+
+	// Android architecture components
+	implementation "android.arch.lifecycle:extensions:1.1.0"
+	implementation "android.arch.persistence.room:runtime:1.0.0"
+	kapt "android.arch.persistence.room:compiler:1.0.0"
 }
 
 kotlin {

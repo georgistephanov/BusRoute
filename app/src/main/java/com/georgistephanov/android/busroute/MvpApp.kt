@@ -9,8 +9,7 @@ import javax.inject.Inject
 
 class MvpApp : Application() {
     @Inject
-    @JvmField
-    var dataManager: DataManager? = null
+    lateinit var dataManager: DataManager
 
     private lateinit var applicationComponent: ApplicationComponent
 

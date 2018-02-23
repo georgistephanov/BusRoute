@@ -11,7 +11,7 @@ fun isContainedInBusStops(activity: Activity, searchQuery: String) : Boolean {
     val query = searchQuery.toUpperCase()
 
     try {
-        val file = activity.assets.open("stops.txt")
+        val file = activity.assets.open("bus_stops.txt")
         reader = BufferedReader(InputStreamReader(file))
 
         var line = reader.readLine()

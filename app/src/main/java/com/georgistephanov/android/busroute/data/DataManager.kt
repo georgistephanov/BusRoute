@@ -1,5 +1,7 @@
 package com.georgistephanov.android.busroute.data
 
-interface DataManager {
+import com.georgistephanov.android.busroute.data.room.DbHelper
+
+interface DataManager : DbHelper {
 
 }

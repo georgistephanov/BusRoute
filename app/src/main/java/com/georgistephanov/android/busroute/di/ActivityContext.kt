@@ -1,9 +1,8 @@
 package com.georgistephanov.android.busroute.di
 
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
+import kotlin.annotation.Retention
 import javax.inject.Qualifier
 
 @Qualifier
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(AnnotationRetention.RUNTIME)
 annotation class ActivityContext

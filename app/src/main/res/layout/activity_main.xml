@@ -15,7 +15,6 @@
 		android:layout_marginEnd="8dp"
 		android:layout_marginStart="8dp"
 		android:layout_marginTop="32dp"
-		android:text="Search via the camera"
 
 		android:textSize="20sp"
 		android:textStyle="bold"

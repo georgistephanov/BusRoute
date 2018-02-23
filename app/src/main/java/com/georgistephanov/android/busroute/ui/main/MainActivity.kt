@@ -1,5 +1,7 @@
 package com.georgistephanov.android.busroute.ui.main
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.widget.TextView
 import android.content.Context
@@ -25,6 +27,21 @@ class MainActivity : BaseActivity(), MainMvpView {
         setContentView(R.layout.activity_main)
 
         activityComponent.inject(this)
+
+        // Get the ViewModel bounded to this activity
+        val model = ViewModelProviders.of(this).get(MainViewModel::class.java)
+
+        // Set the main message text view observer
+        model.mainMessage.observe(this, Observer<String> { mainMessage ->
+            mMainMessage.text = mainMessage
+        })
+
+        // Set the list of stops observer
+        model.listStops.observe(this, Observer<List<String>> { stopsList ->
+            stopsList?.let {
+                mListStops.adapter = CustomAdapter(this, it)
+            }
+        })
 
         presenter.onAttach(this)
     }
