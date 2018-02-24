@@ -1,13 +1,19 @@
 package com.georgistephanov.android.busroute.data.room
 
+import com.georgistephanov.android.busroute.data.room.entities.BusSequence
 import com.georgistephanov.android.busroute.data.room.entities.BusStop
 
 interface DbHelper {
+
+    /* Bus stop methods */
     fun insertBusStop(busStop: BusStop)
-
     fun getBusStop(name: String) : BusStop?
-
     fun deleteBusStop(busStop: BusStop)
-
     fun deleteBusStop(name: String)
+
+    /* Bus sequence methods */
+    fun insertSequence(busSequence: BusSequence)
+    fun getSequence(line: String) : List<BusSequence>?
+    fun getSequence(line: String, direction: Int) : List<BusSequence>?
+    fun deleteSequence(busSequence: BusSequence)
 }

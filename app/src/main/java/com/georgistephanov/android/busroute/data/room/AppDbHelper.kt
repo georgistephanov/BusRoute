@@ -7,7 +7,10 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase.CONFLICT_NONE
 import android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE
+import android.util.Log
+import com.georgistephanov.android.busroute.data.room.dao.BusSequenceDao
 import com.georgistephanov.android.busroute.data.room.dao.BusStopDao
+import com.georgistephanov.android.busroute.data.room.entities.BusSequence
 import com.georgistephanov.android.busroute.data.room.entities.BusStop
 import com.georgistephanov.android.busroute.di.ApplicationContext
 import java.io.BufferedReader
@@ -19,20 +22,21 @@ import javax.inject.Singleton
 @Singleton
 class AppDbHelper @Inject constructor(@ApplicationContext context: Context) : DbHelper {
 
+    private val database: BusStopDatabase
     private val busStopDao: BusStopDao
+    private val busSequenceDao: BusSequenceDao
 
     private val busStopCallback = object: RoomDatabase.Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
-            // Populate the database from the bus_stops.txt file when the database is created
+            // Populate the databases from the asset files when the database is first created
+            var reader: BufferedReader
 
-            val reader: BufferedReader
-
+            // Populate the bus_stop table
             try {
                 val file = context.assets.open("bus_stops.txt")
                 reader = BufferedReader(InputStreamReader(file))
 
                 var line = reader.readLine()
-
                 var negativeIndex = -1
 
                 while (line != null) {
@@ -57,25 +61,69 @@ class AppDbHelper @Inject constructor(@ApplicationContext context: Context) : Db
             } catch (ioe: IOException) {
                 ioe.printStackTrace()
             }
+
+            // Populate the bus_stop_sequence table
+            try {
+                val file = context.assets.open("bus_lines.txt")
+                reader = BufferedReader(InputStreamReader(file))
+
+                var line = reader.readLine()
+
+                while (line != null) {
+                    val split = line.split("\t")
+
+                    // Prevent invalid lines
+                    if (split.size != 5) continue
+
+                    // If there is no stop_code for the current stop, add a negative value
+                    val code: Int = if (split[3] == "NONE") -1 else split[3].toInt()
+
+                    val cv = ContentValues()
+                    cv.put("bus_line", split[0])
+                    cv.put("direction", split[1].toInt())
+                    cv.put("sequence", split[2].toInt())
+                    cv.put("stop_code", code)
+                    cv.put("stop_name", split[4])
+
+                    db.insert("bus_stop_sequence", CONFLICT_NONE, cv)
+
+                    line = reader.readLine()
+                }
+
+            } catch(ioe: IOException) {
+                ioe.printStackTrace()
+            }
         }
     }
 
     init {
-        busStopDao = Room.databaseBuilder(context, BusStopDatabase::class.java, "bus")
-                .allowMainThreadQueries().addCallback(busStopCallback).build().busStopDao()
+        database = Room.databaseBuilder(context, BusStopDatabase::class.java, "bus")
+                .allowMainThreadQueries().addCallback(busStopCallback).build()
+
+        busStopDao = database.busStopDao()
+        busSequenceDao = database.busSequenceDao()
     }
 
+
+    /* Bus stop methods */
     override fun insertBusStop(busStop: BusStop) {
         busStopDao.insert(busStop)
     }
-
     override fun getBusStop(name: String) : BusStop = busStopDao.getStop(name)
-
     override fun deleteBusStop(busStop: BusStop) {
         busStopDao.delete(busStop)
     }
-
     override fun deleteBusStop(name: String) {
         busStopDao.delete(name)
+    }
+
+    /* Bus sequence methods */
+    override fun insertSequence(busSequence: BusSequence) {
+        busSequenceDao.insert(busSequence)
+    }
+    override fun getSequence(line: String) : List<BusSequence>? = busSequenceDao.getSequence(line)
+    override fun getSequence(line: String, direction: Int) : List<BusSequence>? = busSequenceDao.getSequence(line, direction)
+    override fun deleteSequence(busSequence: BusSequence) {
+        busSequenceDao.delete(busSequence)
     }
 }

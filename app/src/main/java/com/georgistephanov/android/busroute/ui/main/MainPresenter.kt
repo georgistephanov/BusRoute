@@ -3,11 +3,13 @@ package com.georgistephanov.android.busroute.ui.main
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import com.georgistephanov.android.busroute.data.DataManager
+import com.georgistephanov.android.busroute.data.room.entities.BusSequence
 import com.georgistephanov.android.busroute.ui.base.BasePresenter
 import com.georgistephanov.android.busroute.utils.busExists
 import com.georgistephanov.android.busroute.utils.getBusDirection
 import com.georgistephanov.android.busroute.utils.getBusStopsList
 import com.georgistephanov.android.busroute.utils.ocr.OcrCaptureActivity
+import java.security.InvalidParameterException
 import javax.inject.Inject
 
 class MainPresenter<V> @Inject constructor(dataManager: DataManager)
@@ -71,7 +73,12 @@ class MainPresenter<V> @Inject constructor(dataManager: DataManager)
         for (busNumber in possibleBusNumbers) {
             for (possibleStop in possibleStops.sortedByDescending {it.length }) {
 
-                val stops: List<String> = getBusStopsList(viewActivity, busNumber, getBusDirection(viewActivity, busNumber, possibleStop))
+                val stops: List<String> = try {
+                    getBusStops(busNumber, possibleStop)
+                } catch (ipe: InvalidParameterException) {
+                    ipe.printStackTrace()
+                    listOf<String>()
+                }
 
                 if (stops.isNotEmpty()) {
                     viewModel.mainMessage.value = possibleStop
@@ -83,5 +90,38 @@ class MainPresenter<V> @Inject constructor(dataManager: DataManager)
         }
 
         viewModel.mainMessage.value = "Could not detect the bus line"
+    }
+
+    private fun getBusStops(busNumber: String, stopName: String) : List<String> {
+
+        val sequence: List<BusSequence>? = dataManager.getSequence(busNumber)
+        sequence ?: throw InvalidParameterException("Invalid bus number")
+
+        val busDirection = getBusDirection(sequence, stopName)
+        if (busDirection != 1 && busDirection != 2) {
+            throw InvalidParameterException("Bus direction must be 1 or 2")
+        }
+
+        val busStops: MutableList<String> = mutableListOf()
+
+        sequence.sortedBy { it.sequence }
+                .forEach {
+
+                    if (it.direction == busDirection) {
+                        busStops.add(it.stopName)
+                    }
+        }
+
+        return busStops
+    }
+
+    private fun getBusDirection(sequence: List<BusSequence>, busStop: String) : Int {
+        sequence.forEach {
+            if (it.stopName.contains(busStop) && it.sequence > 5) {
+                return it.direction
+            }
+        }
+
+        return -1
     }
 }

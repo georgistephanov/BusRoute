@@ -1,6 +1,7 @@
 package com.georgistephanov.android.busroute.data
 
 import com.georgistephanov.android.busroute.data.room.DbHelper
+import com.georgistephanov.android.busroute.data.room.entities.BusSequence
 import com.georgistephanov.android.busroute.data.room.entities.BusStop
 import javax.inject.Inject
 
@@ -18,5 +19,17 @@ class AppDataManager @Inject constructor(val appDbHelper: DbHelper) : DataManage
 
     override fun deleteBusStop(name: String) {
         appDbHelper.deleteBusStop(name)
+    }
+
+    override fun insertSequence(busSequence: BusSequence) {
+        appDbHelper.insertSequence(busSequence)
+    }
+
+    override fun getSequence(line: String): List<BusSequence>? = appDbHelper.getSequence(line)
+
+    override fun getSequence(line: String, direction: Int): List<BusSequence>? = appDbHelper.getSequence(line, direction)
+
+    override fun deleteSequence(busSequence: BusSequence) {
+        appDbHelper.deleteSequence(busSequence)
     }
 }
