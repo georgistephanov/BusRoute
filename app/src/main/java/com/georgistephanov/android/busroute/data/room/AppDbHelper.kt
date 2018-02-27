@@ -121,6 +121,8 @@ class AppDbHelper @Inject constructor(@ApplicationContext context: Context) : Db
     override fun insertSequence(busSequence: BusSequence) {
         busSequenceDao.insert(busSequence)
     }
+
+    override fun busExists(line: String): Boolean = busSequenceDao.getFirstBusLine(line) != null
     override fun getSequence(line: String) : List<BusSequence>? = busSequenceDao.getSequence(line)
     override fun getSequence(line: String, direction: Int) : List<BusSequence>? = busSequenceDao.getSequence(line, direction)
     override fun deleteSequence(busSequence: BusSequence) {

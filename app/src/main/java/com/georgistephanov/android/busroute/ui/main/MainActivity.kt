@@ -5,19 +5,21 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.widget.TextView
 import android.content.Context
+import android.content.Intent
 import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import com.georgistephanov.android.busroute.MvpApp
 import com.georgistephanov.android.busroute.R
 import com.georgistephanov.android.busroute.ui.base.BaseActivity
+import com.georgistephanov.android.busroute.utils.ocr.OcrCaptureActivity
 import org.jetbrains.anko.find
 import javax.inject.Inject
 
 
 class MainActivity : BaseActivity(), MainMvpView {
 
-    @Inject
-    lateinit var presenter: MainMvpPresenter<MainMvpView>
+    val model by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
 
     private val mMainMessage by lazy { find<TextView>(R.id.bm_title) }
     private val mListStops by lazy { find<ListView>(R.id.nextStopsList) }
@@ -29,7 +31,7 @@ class MainActivity : BaseActivity(), MainMvpView {
         activityComponent.inject(this)
 
         // Get the ViewModel bounded to this activity
-        val model = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        model.applicationComponent = (application as MvpApp).getComponent()
 
         // Set the main message text view observer
         model.mainMessage.observe(this, Observer<String> { mainMessage ->
@@ -42,21 +44,13 @@ class MainActivity : BaseActivity(), MainMvpView {
                 mListStops.adapter = CustomAdapter(this, it)
             }
         })
-
-        presenter.onAttach(this)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        presenter.onDetach()
     }
 
     override fun onResume() {
         super.onResume()
 
         if (com.georgistephanov.android.busroute.utils.ocr.OcrCaptureActivity.isCaptured()) {
-            presenter.onCameraActionFinished()
+            model.onCameraActionFinished()
         }
     }
 
@@ -81,7 +75,12 @@ class MainActivity : BaseActivity(), MainMvpView {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.action_camera -> presenter.onCameraActionClicked()
+            R.id.action_camera -> {
+                resetBusStopsList()
+
+                val intent = Intent(this, OcrCaptureActivity::class.java)
+                startActivityForResult(intent, 9003)
+            }
         }
 
         return true

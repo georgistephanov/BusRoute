@@ -13,6 +13,7 @@ interface DbHelper {
 
     /* Bus sequence methods */
     fun insertSequence(busSequence: BusSequence)
+    fun busExists(line: String) : Boolean
     fun getSequence(line: String) : List<BusSequence>?
     fun getSequence(line: String, direction: Int) : List<BusSequence>?
     fun deleteSequence(busSequence: BusSequence)

@@ -25,6 +25,8 @@ class AppDataManager @Inject constructor(val appDbHelper: DbHelper) : DataManage
         appDbHelper.insertSequence(busSequence)
     }
 
+    override fun busExists(line: String): Boolean = appDbHelper.busExists(line)
+
     override fun getSequence(line: String): List<BusSequence>? = appDbHelper.getSequence(line)
 
     override fun getSequence(line: String, direction: Int): List<BusSequence>? = appDbHelper.getSequence(line, direction)

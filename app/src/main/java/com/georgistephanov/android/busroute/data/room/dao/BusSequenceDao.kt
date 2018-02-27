@@ -8,6 +8,9 @@ import com.georgistephanov.android.busroute.data.room.entities.BusSequence
 
 @Dao
 interface BusSequenceDao {
+    @Query("Select * FROM bus_stop_sequence WHERE bus_line = :line LIMIT 1")
+    fun getFirstBusLine(line: String) : BusSequence
+
     @Query("SELECT * FROM bus_stop_sequence WHERE bus_line = :line")
     fun getSequence(line: String) : List<BusSequence>
 
