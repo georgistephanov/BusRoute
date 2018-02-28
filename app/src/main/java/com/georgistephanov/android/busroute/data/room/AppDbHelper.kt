@@ -97,8 +97,11 @@ class AppDbHelper @Inject constructor(@ApplicationContext context: Context) : Db
     }
 
     init {
+        // TODO: Fix the main thread queries by using live data
         database = Room.databaseBuilder(context, BusStopDatabase::class.java, "bus")
-                .allowMainThreadQueries().addCallback(busStopCallback).build()
+                .allowMainThreadQueries()
+                .addCallback(busStopCallback)
+                .build()
 
         busStopDao = database.busStopDao()
         busSequenceDao = database.busSequenceDao()

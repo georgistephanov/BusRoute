@@ -6,7 +6,6 @@ import com.georgistephanov.android.busroute.MvpApp
 import com.georgistephanov.android.busroute.data.DataManager
 import com.georgistephanov.android.busroute.di.ApplicationContext
 import com.georgistephanov.android.busroute.di.module.ApplicationModule
-import com.georgistephanov.android.busroute.service.SyncService
 import dagger.Component
 import javax.inject.Singleton
 
@@ -15,8 +14,6 @@ import javax.inject.Singleton
 interface ApplicationComponent {
 
     fun inject(app: MvpApp)
-
-    fun inject(service: SyncService)
 
     @ApplicationContext
     fun context(): Context

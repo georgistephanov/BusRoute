@@ -14,10 +14,9 @@ import com.georgistephanov.android.busroute.R
 import com.georgistephanov.android.busroute.ui.base.BaseActivity
 import com.georgistephanov.android.busroute.utils.ocr.OcrCaptureActivity
 import org.jetbrains.anko.find
-import javax.inject.Inject
 
 
-class MainActivity : BaseActivity(), MainMvpView {
+class MainActivity : BaseActivity() {
 
     val model by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
 
@@ -61,25 +60,13 @@ class MainActivity : BaseActivity(), MainMvpView {
         return true
     }
 
-    override fun setMainMessage(message: String) {
-        mMainMessage.text = message
-    }
-
-    override fun populateBusStopsListResults(busStops: List<String>) {
-        mListStops.adapter = CustomAdapter(this@MainActivity, busStops)
-    }
-
-    override fun resetBusStopsList() {
-        mListStops.adapter = null
-    }
-
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_camera -> {
-                resetBusStopsList()
+                model.onCameraClicked()
 
                 val intent = Intent(this, OcrCaptureActivity::class.java)
-                startActivityForResult(intent, 9003)
+                startActivity(intent)
             }
         }
 

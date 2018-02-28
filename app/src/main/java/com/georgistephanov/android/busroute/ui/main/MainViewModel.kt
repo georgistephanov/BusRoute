@@ -2,7 +2,7 @@ package com.georgistephanov.android.busroute.ui.main
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.content.Intent
+import com.georgistephanov.android.busroute.data.DataManager
 import com.georgistephanov.android.busroute.data.room.entities.BusSequence
 import com.georgistephanov.android.busroute.di.component.ApplicationComponent
 import com.georgistephanov.android.busroute.utils.ocr.OcrCaptureActivity
@@ -11,12 +11,17 @@ import java.security.InvalidParameterException
 class MainViewModel : ViewModel() {
 
     lateinit var applicationComponent: ApplicationComponent
+    private val dataManager: DataManager by lazy { applicationComponent.getDataManager() }
 
     var mainMessage = MutableLiveData<String>()
     var listStops = MutableLiveData<List<String>>()
 
     init {
         mainMessage.value = "Search via the camera"
+        listStops.value = listOf()
+    }
+
+    fun onCameraClicked() {
         listStops.value = listOf()
     }
 
@@ -41,7 +46,7 @@ class MainViewModel : ViewModel() {
                 val currBusNumber = string.toUpperCase()
 
                 if ( currBusNumber.matches(Regex(".*\\d+.*")) && !(possibleBusNumbers.contains(currBusNumber))) {
-                    if (applicationComponent.getDataManager().busExists(currBusNumber)) {
+                    if (dataManager.busExists(currBusNumber)) {
                         possibleBusNumbers.add(currBusNumber)
                         containsNumber = true
                     }
@@ -57,7 +62,7 @@ class MainViewModel : ViewModel() {
             // length is greater than 2 and there exists a bus stop which contains that string
             if ( !(possibleStop.contains("\n")) &&
                     possibleStop.length > 2 &&
-                    applicationComponent.getDataManager().getBusStop(possibleStop.toUpperCase()) != null) {
+                    dataManager.getBusStop(possibleStop.toUpperCase()) != null) {
 
                 possibleStops.add(possibleStop.toUpperCase())
             }
@@ -74,7 +79,7 @@ class MainViewModel : ViewModel() {
                 }
 
                 if (stops.isNotEmpty()) {
-                    mainMessage.value = possibleStop
+                    mainMessage.value = busNumber
                     listStops.value = stops
 
                     return
@@ -87,7 +92,7 @@ class MainViewModel : ViewModel() {
 
     private fun getBusStops(busNumber: String, stopName: String) : List<String> {
 
-        val sequence: List<BusSequence>? = applicationComponent.getDataManager().getSequence(busNumber)
+        val sequence: List<BusSequence>? = dataManager.getSequence(busNumber)
         sequence ?: throw InvalidParameterException("Invalid bus number")
 
         val busDirection = getBusDirection(sequence, stopName)

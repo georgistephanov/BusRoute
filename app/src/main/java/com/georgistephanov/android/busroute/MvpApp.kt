@@ -8,8 +8,6 @@ import com.georgistephanov.android.busroute.di.module.ApplicationModule
 import javax.inject.Inject
 
 class MvpApp : Application() {
-    @Inject
-    lateinit var dataManager: DataManager
 
     private lateinit var applicationComponent: ApplicationComponent
 
