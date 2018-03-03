@@ -38,7 +38,7 @@ class MainViewModel : ViewModel() {
 
         iterator.forEach {
             var containsNumber = false
-            var stringWithoutNumber = StringBuffer()
+            val stringWithoutNumber = StringBuffer()
 
             // If the string contains a number (i.e. the potential bus number) store that substring
             // in the possibleBusNumbers set and generate a new containing the original one without the number
@@ -75,7 +75,7 @@ class MainViewModel : ViewModel() {
                     getBusStops(busNumber, possibleStop)
                 } catch (ipe: InvalidParameterException) {
                     ipe.printStackTrace()
-                    listOf<String>()
+                    listOf()
                 }
 
                 if (stops.isNotEmpty()) {

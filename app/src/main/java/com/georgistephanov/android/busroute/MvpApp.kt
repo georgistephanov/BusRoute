@@ -1,11 +1,9 @@
 package com.georgistephanov.android.busroute
 
 import android.app.Application
-import com.georgistephanov.android.busroute.data.DataManager
 import com.georgistephanov.android.busroute.di.component.ApplicationComponent
 import com.georgistephanov.android.busroute.di.component.DaggerApplicationComponent
 import com.georgistephanov.android.busroute.di.module.ApplicationModule
-import javax.inject.Inject
 
 class MvpApp : Application() {
 

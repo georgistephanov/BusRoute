@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.view.*
 import android.widget.ArrayAdapter
-import android.widget.ListView
 import com.georgistephanov.android.busroute.MvpApp
 import com.georgistephanov.android.busroute.R
 import com.georgistephanov.android.busroute.ui.base.BaseActivity
@@ -16,12 +15,11 @@ import com.georgistephanov.android.busroute.utils.ocr.OcrCaptureActivity
 import org.jetbrains.anko.find
 
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), BusStopListFragment.OnListFragmentInteractionListener {
 
-    val model by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
+    private val model by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
 
     private val mMainMessage by lazy { find<TextView>(R.id.bm_title) }
-    private val mListStops by lazy { find<ListView>(R.id.nextStopsList) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,13 +33,6 @@ class MainActivity : BaseActivity() {
         // Set the main message text view observer
         model.mainMessage.observe(this, Observer<String> { mainMessage ->
             mMainMessage.text = mainMessage
-        })
-
-        // Set the list of stops observer
-        model.listStops.observe(this, Observer<List<String>> { stopsList ->
-            stopsList?.let {
-                mListStops.adapter = CustomAdapter(this, it)
-            }
         })
     }
 
@@ -73,6 +64,7 @@ class MainActivity : BaseActivity() {
         return true
     }
 
-    private inner class CustomAdapter(context: Context, val busStops: List<String>)
-        : ArrayAdapter<String>(context, R.layout.next_stops_adapter, R.id.name, busStops) { }
+    override fun onListFragmentInteraction(item: String) {
+        // TODO: Open new activity here with more bus stop info
+    }
 }

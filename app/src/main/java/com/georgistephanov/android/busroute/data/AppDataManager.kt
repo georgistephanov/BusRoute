@@ -5,7 +5,7 @@ import com.georgistephanov.android.busroute.data.room.entities.BusSequence
 import com.georgistephanov.android.busroute.data.room.entities.BusStop
 import javax.inject.Inject
 
-class AppDataManager @Inject constructor(val appDbHelper: DbHelper) : DataManager {
+class AppDataManager @Inject constructor(private val appDbHelper: DbHelper) : DataManager {
 
     override fun insertBusStop(busStop: BusStop) {
         appDbHelper.insertBusStop(busStop)

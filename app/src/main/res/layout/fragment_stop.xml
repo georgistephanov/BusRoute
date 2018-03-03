@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="?attr/selectableItemBackground"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<TextView
+		android:id="@+id/name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:padding="15dp"
+		android:textSize="15sp"
+		android:layout_gravity="start"
+		android:textColor="?android:textColorPrimary"
+		android:fontFamily="sans-serif"
+
+		android:layout_alignParentStart="true"/>
+
+	<ImageButton
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="@android:color/transparent"
+		android:src="@drawable/fragment_stop_arrow"
+		android:clickable="false"
+
+		android:tint="?android:textColorPrimary"
+		android:padding="15dp"
+		android:layout_gravity="end"
+		android:layout_alignParentEnd="true"/>
+
+</RelativeLayout>

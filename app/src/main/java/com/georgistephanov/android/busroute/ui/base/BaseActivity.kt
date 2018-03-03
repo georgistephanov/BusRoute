@@ -8,6 +8,7 @@ import com.georgistephanov.android.busroute.di.module.ActivityModule
 
 abstract class BaseActivity : AppCompatActivity() {
 
+    @Suppress("DEPRECATION")
     val activityComponent: ActivityComponent by lazy {
         DaggerActivityComponent.builder()
                 .activityModule(ActivityModule(this))

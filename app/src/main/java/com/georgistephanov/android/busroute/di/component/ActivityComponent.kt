@@ -6,7 +6,7 @@ import com.georgistephanov.android.busroute.ui.main.MainActivity
 import dagger.Component
 
 @PerActivity
-@Component(dependencies = arrayOf(ApplicationComponent::class), modules = arrayOf(ActivityModule::class))
+@Component(dependencies = [ApplicationComponent::class], modules = [ActivityModule::class])
 interface ActivityComponent {
 
     fun inject(activity: MainActivity)
