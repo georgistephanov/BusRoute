@@ -10,6 +10,7 @@ interface DbHelper {
 
     /* Bus stop methods */
     fun insertBusStop(busStop: BusStop)
+    fun busStopExists(name: String) : Boolean
     fun getBusStop(name: String) : BusStop?
     fun deleteBusStop(busStop: BusStop)
     fun deleteBusStop(name: String)

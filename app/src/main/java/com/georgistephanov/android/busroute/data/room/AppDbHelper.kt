@@ -26,7 +26,6 @@ class AppDbHelper @Inject constructor(@ApplicationContext context: Context) : Db
     private val busStopDao: BusStopDao
     private val busSequenceDao: BusSequenceDao
 
-    // TODO: If the onCreate finishes too early it does not run the next time the app is started
     private val busStopCallback = object: RoomDatabase.Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             // Populate the databases from the asset files when the database is first created
@@ -40,6 +39,7 @@ class AppDbHelper @Inject constructor(@ApplicationContext context: Context) : Db
                 var line = reader.readLine()
                 var negativeIndex = -1
 
+                var counter = 0
                 while (line != null) {
 
                     val code: Int =
@@ -55,6 +55,10 @@ class AppDbHelper @Inject constructor(@ApplicationContext context: Context) : Db
                     cv.put("name", name)
 
                     db.insert("bus_stop", CONFLICT_REPLACE, cv)
+
+                    if (++counter % 1000 == 0) {
+                        Log.d("Database", "${counter / 1000}000 rows inserted in bus_stop" )
+                    }
 
                     line = reader.readLine()
                 }
@@ -90,7 +94,7 @@ class AppDbHelper @Inject constructor(@ApplicationContext context: Context) : Db
                     db.insert("bus_stop_sequence", CONFLICT_NONE, cv)
 
                     if (++counter % 1000 == 0) {
-                        Log.d("Database", "${counter / 1000}000 rows inserted in bus_stop" )
+                        Log.d("Database", "${counter / 1000}000 rows inserted in bus_stop_sequence" )
                     }
 
                     line = reader.readLine()
@@ -123,23 +127,23 @@ class AppDbHelper @Inject constructor(@ApplicationContext context: Context) : Db
     override fun insertBusStop(busStop: BusStop) {
         busStopDao.insert(busStop)
     }
-    override fun getBusStop(name: String) : BusStop = busStopDao.getStop(name)
     override fun deleteBusStop(busStop: BusStop) {
         busStopDao.delete(busStop)
     }
     override fun deleteBusStop(name: String) {
         busStopDao.delete(name)
     }
+    override fun busStopExists(name: String) : Boolean = busStopDao.getFirstBusStop(name) != null
+    override fun getBusStop(name: String) : BusStop = busStopDao.getStop(name)
 
     /* Bus sequence methods */
     override fun insertSequence(busSequence: BusSequence) {
         busSequenceDao.insert(busSequence)
     }
-
-    override fun busExists(line: String): Boolean = busSequenceDao.getFirstBusLine(line) != null
-    override fun getSequence(line: String) : List<BusSequence>? = busSequenceDao.getSequence(line)
-    override fun getSequence(line: String, direction: Int) : List<BusSequence>? = busSequenceDao.getSequence(line, direction)
     override fun deleteSequence(busSequence: BusSequence) {
         busSequenceDao.delete(busSequence)
     }
+    override fun busExists(line: String) : Boolean = busSequenceDao.getFirstBusLine(line) != null
+    override fun getSequence(line: String) : List<BusSequence>? = busSequenceDao.getSequence(line)
+    override fun getSequence(line: String, direction: Int) : List<BusSequence>? = busSequenceDao.getSequence(line, direction)
 }

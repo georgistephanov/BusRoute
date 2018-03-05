@@ -8,7 +8,6 @@ import com.georgistephanov.android.busroute.data.room.entities.BusSequence
 import com.georgistephanov.android.busroute.di.component.ApplicationComponent
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
-import java.security.InvalidParameterException
 
 class MainViewModel : ViewModel() {
 
@@ -37,45 +36,45 @@ class MainViewModel : ViewModel() {
         findBusStop()
     }
 
-    // TODO: Refactor this method as there should be a more elegant way of doing that
     private fun findBusStop() {
-//            val cameraStringSet: Set<String> = OcrCaptureActivity.getCameraSourceSet()
+        //val cameraStringSet: Set<String> = OcrCaptureActivity.getCameraSourceSet()
         val cameraStringSet: Set<String> = setOf("Mile end D7")
 
         val possibleStops: MutableList<String> = mutableListOf()
         val possibleBusNumbers: MutableSet<String> = mutableSetOf()
 
-        mainMessage.value = "Looking for stops..."
+        mainMessage.value = "Looking for the correct route..."
 
         launch {
 
-            for (it in cameraStringSet) {
+            for (string in cameraStringSet) {
                 var containsNumber = false
                 val stringWithoutNumber = StringBuffer()
 
                 // If the string contains a number (i.e. the potential bus number) store that substring
                 // in the possibleBusNumbers set and generate a new containing the original one without the number
-                for (string in it.split(" ")) {
-                    val currBusNumber = string.toUpperCase()
+                for (word in string.split(" ")) {
+                    val currWord = word.toUpperCase()
 
-                    if (currBusNumber.matches(Regex(".*\\d+.*")) && !(possibleBusNumbers.contains(currBusNumber))) {
-                        if ( runBlocking { dataManager.busExists(currBusNumber) }) {
-                            possibleBusNumbers.add(currBusNumber)
+                    if (currWord.matches(Regex(".*\\d+.*"))
+                            && !(possibleBusNumbers.contains(currWord))
+                            && runBlocking { dataManager.busExists(currWord) }) {
+
+                            possibleBusNumbers.add(currWord)
                             containsNumber = true
-                        }
                     } else {
-                        stringWithoutNumber.append(string)
+                        stringWithoutNumber.append(word)
                         stringWithoutNumber.append(" ")
                     }
                 }
 
-                val possibleStop = if (containsNumber) stringWithoutNumber.toString().trim() else it
+                val possibleStop = if (containsNumber) stringWithoutNumber.toString().trim() else string
 
                 // Add the string to the list of possible stops only if it doesn't contain new lines, its
                 // length is greater than 2 and there exists a bus stop which contains that string
-                if (!(possibleStop.contains("\n")) &&
+                if ( !(possibleStop.contains("\n")) &&
                         possibleStop.length > 2 &&
-                        runBlocking { dataManager.getBusStop(possibleStop.toUpperCase()) != null }) {
+                        runBlocking { dataManager.busStopExists(possibleStop.toUpperCase()) }) {
 
                     possibleStops.add(possibleStop.toUpperCase())
                 }
@@ -83,18 +82,13 @@ class MainViewModel : ViewModel() {
 
 
             for (busNumber in possibleBusNumbers) {
-
                 val sequence: List<BusSequence>? = runBlocking { dataManager.getSequence(busNumber) }
+                sequence ?: continue
 
                 if (possibleStops.isNotEmpty()) {
 
                     for (possibleStop in possibleStops.sortedByDescending { it.length }) {
-                        val stops: List<BusSequence> = try {
-                                                            getBusStops(sequence, possibleStop)
-                                                        } catch (ipe: InvalidParameterException) {
-                                                            ipe.printStackTrace()
-                                                            listOf()
-                                                        }
+                        val stops: List<BusSequence> = getBusStops(sequence, possibleStop)
 
                         if (stops.isNotEmpty()) {
                             mainMessage.postValue(busNumber)
@@ -105,14 +99,9 @@ class MainViewModel : ViewModel() {
                     }
 
                 } else {
-                    // There are no possible stop names captured
+                    // There are no stop names captured through the camera
 
-                    val stops: List<BusSequence> = try {
-                        getBusStops(sequence)
-                    } catch (ipe: InvalidParameterException) {
-                        ipe.printStackTrace()
-                        listOf()
-                    }
+                    val stops: List<BusSequence> = getBusStops(sequence)
 
                     if (stops.isNotEmpty()) {
                         mainMessage.postValue(busNumber)
@@ -127,24 +116,16 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    private fun getBusStops(sequence: List<BusSequence>?, stopName: String = "") : List<BusSequence> {
-        sequence ?: throw InvalidParameterException("The bus sequence should not be null")
-
+    private fun getBusStops(sequence: List<BusSequence>, stopName: String = "") : List<BusSequence> {
         val busDirection = if (stopName != "") getBusDirection(sequence, stopName) else 1
-
-        if (busDirection != 1 && busDirection != 2) {
-            throw RuntimeException("Bus direction must be 1 or 2")
-        }
 
         val busStops: MutableList<BusSequence> = mutableListOf()
 
-        sequence.sortedBy { it.sequence }
-                .forEach {
-
-                    if (it.direction == busDirection) {
-                        busStops.add(it)
-                    }
-                }
+        sequence.sortedBy{ it.sequence }.forEach {
+            if (it.direction == busDirection) {
+                busStops.add(it)
+            }
+        }
 
         return busStops
     }
@@ -156,6 +137,7 @@ class MainViewModel : ViewModel() {
             }
         }
 
-        return -1
+        // Fallback in case no direction is returned just return the outbound route
+        return 1
     }
 }
