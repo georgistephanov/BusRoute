@@ -5,6 +5,9 @@ import com.georgistephanov.android.busroute.data.room.entities.BusStop
 
 interface DbHelper {
 
+    /* Initialise database upon creation */
+    fun initialiseDatabase()
+
     /* Bus stop methods */
     fun insertBusStop(busStop: BusStop)
     fun getBusStop(name: String) : BusStop?

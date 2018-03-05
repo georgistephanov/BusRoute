@@ -26,6 +26,7 @@ class AppDbHelper @Inject constructor(@ApplicationContext context: Context) : Db
     private val busStopDao: BusStopDao
     private val busSequenceDao: BusSequenceDao
 
+    // TODO: If the onCreate finishes too early it does not run the next time the app is started
     private val busStopCallback = object: RoomDatabase.Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             // Populate the databases from the asset files when the database is first created
@@ -69,23 +70,28 @@ class AppDbHelper @Inject constructor(@ApplicationContext context: Context) : Db
 
                 var line = reader.readLine()
 
+                var counter = 0
                 while (line != null) {
                     val split = line.split("\t")
 
                     // Prevent invalid lines
-                    if (split.size != 5) continue
-
-                    // If there is no stop_code for the current stop, add a negative value
-                    val code: Int = if (split[3] == "NONE") -1 else split[3].toInt()
+                    if (split.size != 5) {
+                        line = reader.readLine()
+                        continue
+                    }
 
                     val cv = ContentValues()
                     cv.put("bus_line", split[0])
                     cv.put("direction", split[1].toInt())
                     cv.put("sequence", split[2].toInt())
-                    cv.put("stop_code", code)
+                    cv.put("stop_code", split[3])
                     cv.put("stop_name", split[4])
 
                     db.insert("bus_stop_sequence", CONFLICT_NONE, cv)
+
+                    if (++counter % 1000 == 0) {
+                        Log.d("Database", "${counter / 1000}000 rows inserted in bus_stop" )
+                    }
 
                     line = reader.readLine()
                 }
@@ -93,13 +99,13 @@ class AppDbHelper @Inject constructor(@ApplicationContext context: Context) : Db
             } catch(ioe: IOException) {
                 ioe.printStackTrace()
             }
+
+            Log.d("Database", "Finished")
         }
     }
 
     init {
-        // TODO: Fix the main thread queries by using live data
         database = Room.databaseBuilder(context, BusStopDatabase::class.java, "bus")
-                .allowMainThreadQueries()
                 .addCallback(busStopCallback)
                 .build()
 
@@ -107,6 +113,11 @@ class AppDbHelper @Inject constructor(@ApplicationContext context: Context) : Db
         busSequenceDao = database.busSequenceDao()
     }
 
+    /**
+     * Empty method to be called from the application object to create the database if it doesn't exist.
+     * This creation happens only the first time the app is used and/or if its data had been deleted.
+     */
+    override fun initialiseDatabase() { busStopDao.initDatabase() }
 
     /* Bus stop methods */
     override fun insertBusStop(busStop: BusStop) {

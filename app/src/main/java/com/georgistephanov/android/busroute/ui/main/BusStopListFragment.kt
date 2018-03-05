@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.georgistephanov.android.busroute.R
+import com.georgistephanov.android.busroute.data.room.entities.BusSequence
 import com.georgistephanov.android.busroute.ui.base.BaseActivity
 
 /**
@@ -30,7 +31,7 @@ class BusStopListFragment : Fragment() {
 
         if (view is RecyclerView) {
 
-            model.listStops.observe(activity as BaseActivity, Observer<List<String>> { stopList ->
+            model.listStops.observe(activity as BaseActivity, Observer<List<BusSequence>> { stopList ->
                 stopList?.let {
                     view.adapter = BusStopRecyclerViewAdapter(it, mListener)
                 }
@@ -63,6 +64,6 @@ class BusStopListFragment : Fragment() {
      * activity.
      */
     interface OnListFragmentInteractionListener {
-        fun onListFragmentInteraction(item: String)
+        fun onListFragmentInteraction(item: BusSequence)
     }
 }

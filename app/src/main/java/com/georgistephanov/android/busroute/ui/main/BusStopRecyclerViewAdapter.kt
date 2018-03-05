@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.georgistephanov.android.busroute.R
+import com.georgistephanov.android.busroute.data.room.entities.BusSequence
 
 import com.georgistephanov.android.busroute.ui.main.BusStopListFragment.OnListFragmentInteractionListener
 import org.jetbrains.anko.find
@@ -14,7 +15,7 @@ import org.jetbrains.anko.find
  * [RecyclerView.Adapter] that can display a [String] and makes a call to the
  * specified [OnListFragmentInteractionListener].
  */
-class BusStopRecyclerViewAdapter(private val mValues: List<String>, private val mListener: OnListFragmentInteractionListener?)
+class BusStopRecyclerViewAdapter(private val mValues: List<BusSequence>, private val mListener: OnListFragmentInteractionListener?)
     : RecyclerView.Adapter<BusStopRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,10 +27,10 @@ class BusStopRecyclerViewAdapter(private val mValues: List<String>, private val 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.mItem = mValues[position]
-        holder.mContentView.text = mValues[position]
+        holder.mContentView.text = mValues[position].stopName
 
         holder.mView.setOnClickListener {
-            mListener?.onListFragmentInteraction(holder.mItem as String)
+            mListener?.onListFragmentInteraction(holder.mItem as BusSequence)
         }
     }
 
@@ -39,6 +40,6 @@ class BusStopRecyclerViewAdapter(private val mValues: List<String>, private val 
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mContentView by lazy { mView.find<TextView>(R.id.name) }
-        var mItem: String? = null
+        var mItem: BusSequence? = null
     }
 }

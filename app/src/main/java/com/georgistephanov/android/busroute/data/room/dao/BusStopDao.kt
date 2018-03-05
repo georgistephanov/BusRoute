@@ -19,4 +19,7 @@ interface BusStopDao {
 
     @Query("DELETE FROM bus_stop WHERE name = (:name)")
     fun delete(name: String)
+
+    @Query("SELECT * FROM bus_stop LIMIT 1")
+    fun initDatabase() : BusStop
 }

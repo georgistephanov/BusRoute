@@ -6,7 +6,7 @@ import android.arch.persistence.room.PrimaryKey
 
 @Entity(tableName = "bus_stop_sequence")
 class BusSequence(@PrimaryKey(autoGenerate = true) val _id: Int,
-                  @ColumnInfo(name = "stop_code") val stopCode: Int,
+                  @ColumnInfo(name = "stop_code") val stopCode: String,
                   @ColumnInfo(name = "bus_line") val busLine: String,
                   val direction: Int,
                   val sequence: Int,

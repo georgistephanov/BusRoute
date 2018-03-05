@@ -10,7 +10,9 @@ import android.view.*
 import android.widget.ArrayAdapter
 import com.georgistephanov.android.busroute.MvpApp
 import com.georgistephanov.android.busroute.R
+import com.georgistephanov.android.busroute.data.room.entities.BusSequence
 import com.georgistephanov.android.busroute.ui.base.BaseActivity
+import com.georgistephanov.android.busroute.ui.stopinfo.StopInformationActivity
 import com.georgistephanov.android.busroute.utils.ocr.OcrCaptureActivity
 import org.jetbrains.anko.find
 
@@ -64,7 +66,11 @@ class MainActivity : BaseActivity(), BusStopListFragment.OnListFragmentInteracti
         return true
     }
 
-    override fun onListFragmentInteraction(item: String) {
-        // TODO: Open new activity here with more bus stop info
+    override fun onListFragmentInteraction(item: BusSequence) {
+        val intent = Intent(this, StopInformationActivity::class.java)
+        intent.putExtra("stopName", item.stopName)
+        intent.putExtra("stopCode", item.stopCode)
+
+        startActivity(intent)
     }
 }

@@ -4,6 +4,9 @@ import android.app.Application
 import com.georgistephanov.android.busroute.di.component.ApplicationComponent
 import com.georgistephanov.android.busroute.di.component.DaggerApplicationComponent
 import com.georgistephanov.android.busroute.di.module.ApplicationModule
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 
 class MvpApp : Application() {
 
@@ -17,6 +20,12 @@ class MvpApp : Application() {
                 .build()
 
         applicationComponent.inject(this)
+
+
+        // Runs a dummy query just to initialise the database if it hasn't been yet created
+        async {
+            applicationComponent.getDataManager().initialiseDatabase()
+        }
     }
 
     fun getComponent(): ApplicationComponent {

@@ -7,6 +7,8 @@ import javax.inject.Inject
 
 class AppDataManager @Inject constructor(private val appDbHelper: DbHelper) : DataManager {
 
+    override fun initialiseDatabase() { appDbHelper.initialiseDatabase() }
+
     override fun insertBusStop(busStop: BusStop) {
         appDbHelper.insertBusStop(busStop)
     }
